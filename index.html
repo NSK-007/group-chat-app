@@ -46,22 +46,22 @@
                     <h3 style="font-weight: lighter;">Register</h3>
                     <br>
                     <div id="error"></div>
-                    <form action="">
+                    <form id="signup-form">
                         <div class="form-group">
                             <label for="name">Name:</label>
-                            <input type="name" class="form-control" id="name">
+                            <input type="text" name="name" class="form-control" id="name">
                         </div><br>
                         <div class="form-group">
                           <label for="email">Email address:</label>
-                          <input type="email" class="form-control" id="email">
+                          <input type="email" name="email" class="form-control" id="email">
                         </div><br>
                         <div class="form-group">
                             <label for="phone">Phone:</label>
-                            <input type="phone" class="form-control" id="phone">
+                            <input type="number" name="phone" class="form-control" id="phone">
                           </div><br>
                         <div class="form-group">
                           <label for="pwd">Password:</label>
-                          <input type="password" class="form-control" id="pwd">
+                          <input type="password" name="password" class="form-control" id="pwd">
                         </div><br>
                         <button type="submit" class="btn btn-md graident-color-right-to-left">sign up</button>
                       </form>
@@ -75,5 +75,8 @@
             </div>
           </div>
     </div>
+    <script src="index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 </body>
 </html>

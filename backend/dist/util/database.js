@@ -1,0 +1,19 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = require("dotenv");
+const sequelize_typescript_1 = require("sequelize-typescript");
+const user_1 = __importDefault(require("../models/user"));
+(0, dotenv_1.config)();
+const connection = new sequelize_typescript_1.Sequelize({
+    dialect: 'mysql',
+    host: process.env.DB_HOST_NAME,
+    username: process.env.DB_USER_NAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    logging: false,
+    models: [user_1.default]
+});
+exports.default = connection;
