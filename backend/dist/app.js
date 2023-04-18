@@ -20,7 +20,10 @@ const database_1 = __importDefault(require("./util/database"));
 const user_route_1 = __importDefault(require("./routes/user-route"));
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: 'http://127.0.0.1:5500',
+    methods: ['POST']
+}));
 app.use(body_parser_1.default.json());
 app.use('/user', user_route_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
