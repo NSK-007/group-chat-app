@@ -12,10 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signUpUser = void 0;
+exports.loginUser = exports.signUpUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const transaction_services_1 = require("../services/transaction-services");
 const user_services_1 = require("../services/user-services");
+const jsonwebtoken_1 = require("jsonwebtoken");
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 const signUpUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const t = yield (0, transaction_services_1.transaction)();
     try {
@@ -42,3 +45,24 @@ const signUpUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.signUpUser = signUpUser;
+const generateToken = (user) => {
+    const token_secret = process.env.TOKEN_SECRET;
+    return (0, jsonwebtoken_1.sign)({ id: user.id, name: user.name }, token_secret);
+};
+const loginUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const body = req.body;
+        let user = yield (0, user_services_1.findUserByEmail)(body.email);
+        if (user.length <= 0)
+            throw new Error('User doesn\'t exists');
+        let flag = yield bcrypt_1.default.compare(body.password, user[0].password);
+        if (!flag)
+            throw new Error('Incorrect Password');
+        const token = generateToken(user[0]);
+        res.status(200).json({ success: true, message: 'Login Successful', token: token });
+    }
+    catch (err) {
+        res.status(201).json({ success: false, error: err.message });
+    }
+});
+exports.loginUser = loginUser;

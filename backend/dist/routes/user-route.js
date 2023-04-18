@@ -9,7 +9,8 @@ const cors_1 = __importDefault(require("cors"));
 const UserRouter = (0, express_1.Router)();
 let corsOptions = {
     origin: 'http://127.0.0.1:5500',
-    methods: ["POST"]
+    methods: ["POST", "GET"]
 };
 UserRouter.post('/signUp', (0, cors_1.default)(corsOptions), user_controller_1.signUpUser);
+UserRouter.post('/login', (0, cors_1.default)(corsOptions), user_controller_1.loginUser);
 exports.default = UserRouter;
