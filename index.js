@@ -2,6 +2,9 @@ const backend_url = 'http://localhost:3000'
 const form = document.querySelector('#signup-form');
 const login_form = document.querySelector('#login-form');
 
+document.addEventListener('DOMContentLoaded', checkAuthentication);
+let token;
+
 if(form!==null)
     form.addEventListener('submit', signUpUser);
 if(login_form!==null)
@@ -66,8 +69,16 @@ async function loginUser(e){
         if(res.status!==200)
             throw new Error(res.data.error);
         showSuccess(res.data.message);
+        localStorage.setItem('token', res.data.token);
     }
     catch(err){
         showError(err.message);
     }
+}
+
+function checkAuthentication(){
+    token = localStorage.getItem('token');
+    console.log(token);
+    if(token !== null)
+        window.location.href = './chat.html';
 }
