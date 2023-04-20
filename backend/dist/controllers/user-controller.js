@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.signUpUser = void 0;
+exports.getUser = exports.loginUser = exports.signUpUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const transaction_services_1 = require("../services/transaction-services");
 const user_services_1 = require("../services/user-services");
@@ -62,7 +62,20 @@ const loginUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         res.status(200).json({ success: true, message: 'Login Successful', token: token });
     }
     catch (err) {
-        res.status(201).json({ success: false, error: err.message });
+        res.status(201).send({ success: false, error: err.message });
     }
 });
 exports.loginUser = loginUser;
+const getUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let { id, name, email, phone } = req.user;
+        let user = {
+            id, name, email, phone
+        };
+        res.status(200).json({ success: true, user });
+    }
+    catch (err) {
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.getUser = getUser;

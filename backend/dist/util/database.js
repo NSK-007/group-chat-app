@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = require("dotenv");
 const sequelize_typescript_1 = require("sequelize-typescript");
 const user_1 = __importDefault(require("../models/user"));
+const chat_1 = __importDefault(require("../models/chat"));
 (0, dotenv_1.config)();
 const connection = new sequelize_typescript_1.Sequelize({
     dialect: 'mysql',
@@ -13,7 +14,8 @@ const connection = new sequelize_typescript_1.Sequelize({
     username: process.env.DB_USER_NAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    // repositoryMode: true,
     logging: false,
-    models: [user_1.default]
+    models: [chat_1.default, user_1.default]
 });
 exports.default = connection;

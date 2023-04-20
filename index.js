@@ -70,6 +70,8 @@ async function loginUser(e){
             throw new Error(res.data.error);
         showSuccess(res.data.message);
         localStorage.setItem('token', res.data.token);
+        checkAuthentication();
+
     }
     catch(err){
         showError(err.message);

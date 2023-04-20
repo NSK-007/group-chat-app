@@ -8,6 +8,9 @@ class Chat extends Model{
 
     @Column({type: DataType.STRING, allowNull: false})
     message!: string;
+
+    @Column({type: DataType.STRING, allowNull: false})
+    user!: string;
 }
 
 export default Chat;

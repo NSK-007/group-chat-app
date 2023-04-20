@@ -60,7 +60,10 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try{
-        const user = req.user;
+        let {id, name, email, phone} = req.user;
+        let user = {
+            id, name, email, phone
+        }
         res.status(200).json({success: true, user});
     }
     catch(err: Error | any){
