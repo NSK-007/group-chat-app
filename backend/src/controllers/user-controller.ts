@@ -54,6 +54,16 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             
     }
     catch(err: Error | any){
-        res.status(201).json({success: false, error: err.message});
+        res.status(201).send({success: false, error: err.message});
+    }
+}
+
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const user = req.user;
+        res.status(200).json({success: true, user});
+    }
+    catch(err: Error | any){
+        res.status(201).send({success: false, error: err.message});
     }
 }

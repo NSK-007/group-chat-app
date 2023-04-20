@@ -8,3 +8,7 @@ export const createNewUser = (name: string, email: string, phone: string, hash: 
 export const findUserByEmail = (email: string) => {
     return User.findAll({where:{email}});
 } 
+
+export const findUserById = (u_id: number) => {
+    return User.findByPk(u_id);
+}

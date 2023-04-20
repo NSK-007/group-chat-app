@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { Sequelize } from "sequelize-typescript";
 import User from '../models/user';
+import Chat from '../models/chat';
 config();
 
 const connection = new Sequelize({
@@ -9,8 +10,9 @@ const connection = new Sequelize({
     username: process.env.DB_USER_NAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
+    // repositoryMode: true,
     logging: false,
-    models: [User]
+    models: [Chat, User]
 });
 
 export default connection;

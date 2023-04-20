@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { loginUser, signUpUser } from "../controllers/user-controller";
+import { getUser, loginUser, signUpUser } from "../controllers/user-controller";
 import cors from 'cors';
+import { authenticate } from "../middleware/authenticate";
 
 const UserRouter = Router();
 let corsOptions = {
@@ -11,5 +12,7 @@ let corsOptions = {
 UserRouter.post('/signUp', cors(corsOptions), signUpUser);
 
 UserRouter.post('/login', cors(corsOptions), loginUser);
+
+UserRouter.get('/get-user', cors(corsOptions), authenticate, getUser);
 
 export default UserRouter;
