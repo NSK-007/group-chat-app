@@ -66,11 +66,29 @@
     .profile{
       color: brown; font-weight: bold;
     }
+    #chat-box::-webkit-scrollbar {
+      display: none;
+      /* width: 8px; */
+      /* background-color: #F5F5F5; */
+    }
+    /* #chat-box:hover{
+      display: block;
+    }
+
+
+#chat-box::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(104, 140, 240, 0.3);
+  }
+
+#chat-box::-webkit-scrollbar-thumb {
+    background-color: lightblue;
+    outline: 1px solid slategrey;
+} */
     </style>
 </head>
 <body class="graident-color"><br>
     <div class="container">
-      <div class="modal overflow-auto" tabindex="-1" style="display: none;">
+      <div id="chat-modal" class="modal overflow-auto" tabindex="-1" style="display: none;">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
@@ -108,16 +126,15 @@
 
 
       <div id="chat-modal">
-        <div class="modal overflow-auto" tabindex="-1" style="display: block;">
+        <div class="modal" tabindex="-1" style="display: block;">
           <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">Work</h5>
+                <h5 class="modal-title" style="font-weight:bold; color: brown;">Work</h5>
                 <button type="button" class="btn graident-color-right-to-left">Back</button>
               </div>
               <div id="chat-box" class="modal-body" style="height: 50rem;">
                 <div id="error"></div>
-               
               </div>
               <div class="modal-footer justify-content-center">
                 <form id="chat-form">

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMessages = exports.sendMessage = void 0;
+exports.newMessages = exports.getMessages = exports.sendMessage = void 0;
 const chat_services_1 = require("../services/chat-services");
 const transaction_services_1 = require("../services/transaction-services");
 const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -17,9 +17,9 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         let currentUser = req.user;
         const body = req.body;
-        yield (0, chat_services_1.createMessage)(currentUser, body.message, t);
+        let message = yield (0, chat_services_1.createMessage)(currentUser, body.message, t);
         yield t.commit();
-        res.status(200).json({ success: true, message: 'Message delivered' });
+        res.status(200).json({ success: true, message: message });
     }
     catch (err) {
         yield t.rollback();
@@ -37,3 +37,15 @@ const getMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getMessages = getMessages;
+const newMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const params = req.params;
+        let new_messages = yield (0, chat_services_1.getNewMessages)(+params.count);
+        res.status(200).json({ success: true, new_messages });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.newMessages = newMessages;
