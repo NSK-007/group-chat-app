@@ -13,6 +13,8 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             throw new Error('Please login to continue');
         if(typeof LoggedInUser !== 'string')
             user = await findUserById(LoggedInUser.id);
+        if(user === null)
+            throw new Error('User not found');
         req.user = user;
         next();
     }

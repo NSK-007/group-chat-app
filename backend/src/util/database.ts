@@ -2,6 +2,8 @@ import { config } from 'dotenv';
 import { Sequelize } from "sequelize-typescript";
 import User from '../models/user';
 import Chat from '../models/chat';
+import Group from '../models/group';
+import GroupMember from '../models/groupmember';
 config();
 
 const connection = new Sequelize({
@@ -12,7 +14,7 @@ const connection = new Sequelize({
     database: process.env.DB_NAME,
     // repositoryMode: true,
     logging: false,
-    models: [Chat, User]
+    models: [Chat, User, Group, GroupMember]
 });
 
 export default connection;

@@ -21,6 +21,9 @@ const user_route_1 = __importDefault(require("./routes/user-route"));
 const chat_1 = __importDefault(require("./models/chat"));
 const user_1 = __importDefault(require("./models/user"));
 const chat_route_1 = __importDefault(require("./routes/chat-route"));
+const group_1 = __importDefault(require("./models/group"));
+const groupmember_1 = __importDefault(require("./models/groupmember"));
+const group_route_1 = __importDefault(require("./routes/group-route"));
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
 app.use((0, cors_1.default)({
@@ -30,8 +33,13 @@ app.use((0, cors_1.default)({
 app.use(body_parser_1.default.json());
 app.use('/user', user_route_1.default);
 app.use('/chat', chat_route_1.default);
+app.use('/group', group_route_1.default);
 chat_1.default.belongsTo(user_1.default, { constraints: true, onDelete: 'CASCADE' });
+chat_1.default.belongsTo(group_1.default, { constraints: true, onDelete: 'CASCADE' });
+groupmember_1.default.belongsTo(user_1.default, { constraints: true, onDelete: 'CASCADE' });
+groupmember_1.default.belongsTo(group_1.default, { constraints: true, onDelete: 'CASCADE' });
 user_1.default.hasMany(chat_1.default);
+group_1.default.hasMany(chat_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.default

@@ -4,7 +4,7 @@ import { Table, Model, Column, DataType, AutoIncrement  } from "sequelize-typesc
 class User extends Model{
     @AutoIncrement
     @Column({type: DataType.INTEGER, primaryKey: true, allowNull: false})
-    id!: number;
+    id!: number; 
 
     @Column({type: DataType.STRING, allowNull: false})
     name!: string;

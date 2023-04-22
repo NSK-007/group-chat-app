@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { checkAnyNewMessages, createMessage, getAllChats, getNewMessages } from "../services/chat-services";
 import { transaction } from "../services/transaction-services";
-import Chat from "../models/chat";
 
 export const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     const t = await transaction();

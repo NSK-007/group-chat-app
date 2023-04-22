@@ -78,9 +78,22 @@ async function loginUser(e){
     }
 }
 
-function checkAuthentication(){
+async function checkAuthentication(){
+    if((window.location.href).includes('index'))
+        return;
     token = localStorage.getItem('token');
-    console.log(token);
-    if(token !== null)
-        window.location.href = './chat.html';
+    try{
+        if(token === null)
+            return;
+        let res = await axios.get(`${backend_url}/user/get-user`, {headers: {"Authorization": token}});
+        if(res.status !== 200)
+            throw new Error(res.data.error);
+        user = res.data.user;
+        window.location.href = ('./chat.html');
+    }
+    catch(err){
+        console.log(err);
+        showError(err.message);
+    }
+    return;
 }

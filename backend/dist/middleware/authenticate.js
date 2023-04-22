@@ -23,6 +23,8 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             throw new Error('Please login to continue');
         if (typeof LoggedInUser !== 'string')
             user = yield (0, user_services_1.findUserById)(LoggedInUser.id);
+        if (user === null)
+            throw new Error('User not found');
         req.user = user;
         next();
     }
