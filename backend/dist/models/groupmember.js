@@ -10,18 +10,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-let GroupMember = class GroupMember extends sequelize_typescript_1.Model {
+let Groupmember = class Groupmember extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, primaryKey: true, allowNull: false }),
     __metadata("design:type", Number)
-], GroupMember.prototype, "id", void 0);
+], Groupmember.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", String)
-], GroupMember.prototype, "name", void 0);
-GroupMember = __decorate([
+], Groupmember.prototype, "name", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
+    __metadata("design:type", Number)
+], Groupmember.prototype, "UserId", void 0);
+Groupmember = __decorate([
     (0, sequelize_typescript_1.Table)({ timestamps: true, tableName: 'groupmembers' })
-], GroupMember);
-exports.default = GroupMember;
+], Groupmember);
+exports.default = Groupmember;

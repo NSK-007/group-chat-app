@@ -112,6 +112,7 @@
             </div>
             <div id="group-box" class="modal-body" style="height: 40rem;">
              <div class="list-group">
+                  <h3 style="color: brown;">Groups</h3>
                   <div class="row">
                       <div id="groups_list" class="col-lg-12">
                         
@@ -139,10 +140,16 @@
           <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" style="font-weight:bold; color: brown;">Work</h5>
+                <h5 id="chat-box-title" class="modal-title" style="font-weight:bold; color: brown;">Work</h5>
+                <form id="invite-form">
+                  <div class="input-group mb-3">
+                    <input type="number" name="invite" class="form-control" placeholder="enter phone" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn graident-color-right-to-left" type="submit" id="invite-submit"><i class="bi bi-person-plus"></i></button>
+                  </div> 
+              </form>
                 <button id="back" type="button" class="btn graident-color-right-to-left">Back</button>
               </div>
-              <div id="chat-box" class="modal-body" style="height: 50rem;">
+              <div id="chat-box" class="modal-body">
                 <div id="error"></div>
               </div>
               <div class="modal-footer justify-content-center">

@@ -8,7 +8,7 @@ import Chat from './models/chat';
 import User from './models/user';
 import ChatRouter from './routes/chat-route';
 import Group from './models/group';
-import GroupMember from './models/groupmember';
+import Groupmember from './models/groupmember';
 import GroupRouter from './routes/group-route';
 
 const app = express();
@@ -24,11 +24,9 @@ app.use('/chat', ChatRouter);
 app.use('/group', GroupRouter);
 
 Chat.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
-Chat.belongsTo(Group, {constraints: true, onDelete: 'CASCADE'});
-GroupMember.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
-GroupMember.belongsTo(Group, {constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Chat);
-Group.hasMany(Chat);
+Groupmember.belongsTo(Group);
+Group.hasMany(Groupmember);
 
 
 const start = async(): Promise<void> => {

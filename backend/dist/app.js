@@ -35,11 +35,9 @@ app.use('/user', user_route_1.default);
 app.use('/chat', chat_route_1.default);
 app.use('/group', group_route_1.default);
 chat_1.default.belongsTo(user_1.default, { constraints: true, onDelete: 'CASCADE' });
-chat_1.default.belongsTo(group_1.default, { constraints: true, onDelete: 'CASCADE' });
-groupmember_1.default.belongsTo(user_1.default, { constraints: true, onDelete: 'CASCADE' });
-groupmember_1.default.belongsTo(group_1.default, { constraints: true, onDelete: 'CASCADE' });
 user_1.default.hasMany(chat_1.default);
-group_1.default.hasMany(chat_1.default);
+groupmember_1.default.belongsTo(group_1.default);
+group_1.default.hasMany(groupmember_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.default

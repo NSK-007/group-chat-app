@@ -14,4 +14,5 @@ let corsOptions = {
 };
 GroupRouter.get('/get-groups', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, group_controller_1.getGroups);
 GroupRouter.post('/create-group', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, group_controller_1.createGroup);
+GroupRouter.post('/add-new-member/:group_id', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, group_controller_1.createMembership);
 exports.default = GroupRouter;

@@ -17,7 +17,9 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         let currentUser = req.user;
         const body = req.body;
-        let message = yield (0, chat_services_1.createMessage)(currentUser, body.message, t);
+        let params = req.params;
+        // console.log(params);
+        let message = yield (0, chat_services_1.createMessage)(currentUser, body.message, +params.group_id, t);
         yield t.commit();
         res.status(200).json({ success: true, message: message });
     }
@@ -29,7 +31,8 @@ const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.sendMessage = sendMessage;
 const getMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const messages = yield (0, chat_services_1.getAllChats)();
+        let params = req.params;
+        const messages = yield (0, chat_services_1.getGroupChats)(+params.group_id);
         res.status(200).json({ success: true, messages });
     }
     catch (err) {
@@ -40,7 +43,7 @@ exports.getMessages = getMessages;
 const newMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const params = req.params;
-        let new_messages = yield (0, chat_services_1.getNewMessages)(+params.count);
+        let new_messages = yield (0, chat_services_1.getNewMessages)(+params.count, params.group_id);
         res.status(200).json({ success: true, new_messages });
     }
     catch (err) {

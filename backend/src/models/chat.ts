@@ -7,10 +7,13 @@ class Chat extends Model{
     id! : number;
 
     @Column({type: DataType.STRING, allowNull: false})
-    message!: string;
+    user!: string;
 
     @Column({type: DataType.STRING, allowNull: false})
-    user!: string;
+    message!: string;
+
+    @Column({type: DataType.INTEGER, allowNull: false})
+    GroupId!: number;
 }
 
 export default Chat;

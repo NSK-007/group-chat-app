@@ -7,6 +7,9 @@ let create_group = document.querySelector('#create-group');
 let groups = document.querySelector('#groups');
 let logout = document.querySelector('#log-out');
 let group_form = document.querySelector('#group-form');
+let groups_list = document.querySelector('#groups_list');
+let invite_form = document.querySelector('#invite-form');
+let group_id;
 
 chatForm.addEventListener('submit', sendMessage);
 back.addEventListener('click', closeChatWindow);
@@ -14,7 +17,8 @@ create_group.addEventListener('click', createGroup);
 groups.addEventListener('click', goToGroups);
 logout.addEventListener('click', logoutUser);
 group_form.addEventListener('submit', createNewGroupInBackend);
-
+groups_list.addEventListener('click', openChatWindow);
+invite_form.addEventListener('submit', addNewMember);
 
 let user;
 const backend_url = 'http://localhost:3000';
@@ -25,10 +29,11 @@ function containsOnlySpaces(str) {
 }
 
 const scrollSmoothlyToBottom = (id) => {
+    console.log('scrolling....')
     const element = $(`#${id}`);
     element.animate({
         scrollTop: element.prop("scrollHeight")
-    }, 2500);
+    }, 1500);
 }
 
 function logoutUser(){
@@ -45,6 +50,23 @@ function goToGroups(){
         $('#group-modal').modal('hide');
         $('#chat-modal').style.display = 'block';
     }, 1000);
+
+    getGroups();
+}
+
+async function openChatWindow(e){
+    $('#chat-modal').delay(500).fadeOut('slow');
+    $('#chat-modal-box').delay(500).fadeIn('slow');
+
+    let title = document.querySelector('#chat-box-title');
+    title.innerHTML = e.target.innerHTML;
+    group_id = (e.target.id).split('group_')[1];
+    await getMessages(group_id);
+    setTimeout(() => {
+        $('#chat-modal').modal('hide');
+        scrollSmoothlyToBottom('chat-box');
+        $('#chat-modal-box').style.display = 'block';
+    }, 1000);   
 }
 
 function createGroup(){
@@ -81,14 +103,32 @@ async function createNewGroupInBackend(e){
 }
 
 function addGroups(groups){
-    let groups_list = document.querySelector('#groups_list');
+    groups_list.innerHTML = '';
     for(let i=0;i<groups.length;i++){
         let button = document.createElement('button');
         button.className = 'list-group-item list-group-item-action';
-        button.id = 'group_'+groups[i].id;
+        button.id = 'group_'+groups[i].GroupId;
         button.appendChild(document.createTextNode(`${groups[i].name}`));
-
+        button.style.color = 'chocolate';
+        button.style.borderRadius = '2px'
+        button.style.borderColor = 'brown'
         groups_list.appendChild(button);
+    }
+}
+
+async function addNewMember(e){
+    try{
+        let phone = e.target.invite.value;
+        if(phone==='' || phone===null)
+            throw new Error('Enter correct phone number');
+
+        let res = await axios.post(`${backend_url}/group/add-new-member/${group_id}`, {phone}, {headers: {"Authorization": token}});
+        if(res.status!==200)
+            throw new Error(res.data.error);
+        console.log(res.data); 
+    }
+    catch(err){
+        console.log(err);
     }
 }
 
@@ -116,26 +156,28 @@ function closeChatWindow(){
 }
 
 
-async function checkNewMessages(){
+async function checkNewMessagesInCurrentGroup(group_id){
     try{
-        let res = await axios.get(`${backend_url}/chat/new-messages/${messages}`, {headers: {"Authorization": token}});
+        let res = await axios.get(`${backend_url}/chat/new-messages/${messages}/${group_id}`, {headers: {"Authorization": token}});
         return res.data.new_messages;
     }
     catch(err){
         showError(err.message);
     }
 }
-// setInterval(async () => {
+//-------do not remove this--------------//
+setInterval(async () => {
 
-//     let new_messages = await checkNewMessages();
-//     if(new_messages!==undefined){
-//         messages = messages + new_messages.length;
-//         for(let i=0;i<new_messages.length;i++){
-//             createNewChat(new_messages[i]);
-//             scrollSmoothlyToBottom('chat-box');
-//         }
-//     }
-// }, 3000);
+    let new_messages = await checkNewMessagesInCurrentGroup(group_id);
+    console.log(new_messages);
+    if(new_messages!==undefined || new_messages.length>0){
+        messages = messages + new_messages.length;
+        for(let i=0;i<new_messages.length;i++){
+            createNewChat(new_messages[i]);
+            scrollSmoothlyToBottom('chat-box');
+        }
+    }
+}, 3000);
 
 async function showError(err){
     let err_div = document.querySelector('#error');
@@ -163,9 +205,8 @@ async function checkAuthentication(){
             if(res.status !== 200)
                 throw new Error(res.data.error);
             user = res.data.user;
-            console.log(user);
-            await getMessages();
-            scrollSmoothlyToBottom('chat-box');
+            // await getMessages();
+            // scrollSmoothlyToBottom('chat-box');
         }
         catch(err){
             window.location.href = './login.html'
@@ -211,21 +252,24 @@ function createNewChat(message){
 }
 
 function showMessages(messages){
-    // console.log(moment(messages[0].createdAt).format("hh:mm a"))
-
+    console.log(moment(messages[0].createdAt).format("hh:mm a"))
+    document.querySelector('#chat-box').innerHTML = '';
     for(let i=0;i<messages.length;i++){
         createNewChat(messages[i]);
     }
+    // scrollSmoothlyToBottom('chat-box');
 }
 
-async function getMessages(){
+async function getMessages(group_id){
+    messages = 0;
     try{
-        let res = await axios.get(`${backend_url}/chat/get-messages`, {headers: {"Authorization": token}});
-        messages = res.data.messages.length;
-        // console.log(messages)
-        showMessages(res.data.messages);
+        console.log(group_id);
+        let res = await axios.get(`${backend_url}/chat/get-messages/${group_id}`, {headers: {"Authorization": token}});
         if(res.status!==200)
             throw new Error(res.data.error);
+        messages = res.data.messages.length;
+        console.log(res.data.messages);
+        showMessages(res.data.messages);
     }
     catch(err){
         showError(err.message);
@@ -239,7 +283,7 @@ async function sendMessage(e){
         throw new Error('Empty Message');
     try{
         e.target.reset();
-        let res = await axios.post(`${backend_url}/chat/send-message`, {message}, {headers: {"Authorization": token}});
+        let res = await axios.post(`${backend_url}/chat/send-message/${group_id}`, {message}, {headers: {"Authorization": token}});
         if(res.status!==200)
             throw new Error(res.data.error);
         messages += 1;

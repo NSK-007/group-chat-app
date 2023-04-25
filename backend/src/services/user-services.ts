@@ -1,4 +1,4 @@
-import { Transaction } from "sequelize";
+import { Transaction, where } from "sequelize";
 import User from "../models/user"
 
 export const createNewUser = (name: string, email: string, phone: string, hash: string, t: Transaction) => {
@@ -11,4 +11,8 @@ export const findUserByEmail = (email: string) => {
 
 export const findUserById = (u_id: number) => {
     return User.findByPk(u_id);
+}
+
+export const findUserByPhone = (phone: string) => {
+    return User.findOne({where: {phone}});
 }

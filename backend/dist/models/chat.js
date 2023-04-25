@@ -20,11 +20,15 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", String)
-], Chat.prototype, "message", void 0);
+], Chat.prototype, "user", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", String)
-], Chat.prototype, "user", void 0);
+], Chat.prototype, "message", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
+    __metadata("design:type", Number)
+], Chat.prototype, "GroupId", void 0);
 Chat = __decorate([
     (0, sequelize_typescript_1.Table)({ timestamps: true, tableName: 'chats', initialAutoIncrement: '1' })
 ], Chat);
