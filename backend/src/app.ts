@@ -13,10 +13,11 @@ import GroupRouter from './routes/group-route';
 
 const app = express();
 config();
-app.use(cors({
-    origin: 'http://127.0.0.1:5500',
-    methods: ['POST']
-}));
+// app.use(cors({
+//     origin: 'http://127.0.0.1:5500',
+//     methods: ['POST', 'GET', 'PUT']
+// }));
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/user', UserRouter);

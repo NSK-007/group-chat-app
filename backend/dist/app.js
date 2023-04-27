@@ -26,10 +26,11 @@ const groupmember_1 = __importDefault(require("./models/groupmember"));
 const group_route_1 = __importDefault(require("./routes/group-route"));
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
-app.use((0, cors_1.default)({
-    origin: 'http://127.0.0.1:5500',
-    methods: ['POST']
-}));
+// app.use(cors({
+//     origin: 'http://127.0.0.1:5500',
+//     methods: ['POST', 'GET', 'PUT']
+// }));
+app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
 app.use('/user', user_route_1.default);
 app.use('/chat', chat_route_1.default);

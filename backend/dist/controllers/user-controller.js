@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUser = exports.loginUser = exports.signUpUser = void 0;
+exports.isAdmin = exports.getUser = exports.loginUser = exports.signUpUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const transaction_services_1 = require("../services/transaction-services");
 const user_services_1 = require("../services/user-services");
@@ -79,3 +79,16 @@ const getUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getUser = getUser;
+const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let params = req.params;
+        let admin_record = yield (0, user_services_1.checkIfAdmin)(+params.group_id, +req.user.id);
+        if (admin_record === null || admin_record === undefined || admin_record.length === 0)
+            throw new Error('Not an admin');
+        res.status(200).json({ success: true, admin: true });
+    }
+    catch (err) {
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.isAdmin = isAdmin;

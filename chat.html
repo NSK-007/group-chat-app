@@ -100,6 +100,8 @@
 } */
     </style>
 </head>
+
+<!-- ---------------------------Groups List--------------------------------------------- -->
 <body class="graident-color"><br>
     <div class="container">
       <div id="chat-modal" class="modal overflow-auto" tabindex="-1" style="display: block;">
@@ -133,7 +135,7 @@
         </div>
       </div>
 
-
+<!-- ------------------------------------------group chat box---------------------------------------- -->
 
       <div>
         <div id="chat-modal-box" class="modal" tabindex="-1" style="display: none;">
@@ -147,7 +149,10 @@
                     <button class="btn graident-color-right-to-left" type="submit" id="invite-submit"><i class="bi bi-person-plus"></i></button>
                   </div> 
               </form>
+              <div class="btn-group" role="group" aria-label="Basic example">
                 <button id="back" type="button" class="btn graident-color-right-to-left">Back</button>
+                <button id="members" type="button" class="btn graident-color-right-to-left">Members</button>
+              </div>
               </div>
               <div id="chat-box" class="modal-body">
                 <div id="error"></div>
@@ -160,10 +165,13 @@
                     </div> 
                 </form>
               </div>
+              
             </div>
           </div>
         </div>
       </div>
+
+      <!-- -----------------------------------------create group modal---------------------------------------------- -->
 
       <div>
         <div id="group-modal" class="modal" tabindex="-1" style="display: none;">
@@ -194,7 +202,30 @@
         </div>
       </div>
 
+
+    <!-- ---------------------------------Group Members List------------------------------------------->
+      
+      <div>
+        <div id="members-modal" class="modal" tabindex="-1" style="display: none;">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" style="font-weight:bold; color: brown;">Group Members</h5>
+                <button id="back-to-chat" type="button" class="btn graident-color-right-to-left">back</button>
+              </div>
+              <div class="modal-body" style="height: 50rem;">
+                <ul id="group-members-box" class="list-group list-group-flush">
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+
+
 
     
     <script src="chat.js"></script>

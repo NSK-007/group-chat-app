@@ -9,7 +9,10 @@ let logout = document.querySelector('#log-out');
 let group_form = document.querySelector('#group-form');
 let groups_list = document.querySelector('#groups_list');
 let invite_form = document.querySelector('#invite-form');
+let members = document.querySelector('#members');
+let back_to_chat = document.querySelector('#back-to-chat');
 let group_id;
+let group_admin;
 
 chatForm.addEventListener('submit', sendMessage);
 back.addEventListener('click', closeChatWindow);
@@ -19,6 +22,8 @@ logout.addEventListener('click', logoutUser);
 group_form.addEventListener('submit', createNewGroupInBackend);
 groups_list.addEventListener('click', openChatWindow);
 invite_form.addEventListener('submit', addNewMember);
+members.addEventListener('click', showMembers);
+back_to_chat.addEventListener('click', backToChatBox);
 
 let user;
 const backend_url = 'http://localhost:3000';
@@ -29,7 +34,7 @@ function containsOnlySpaces(str) {
 }
 
 const scrollSmoothlyToBottom = (id) => {
-    console.log('scrolling....')
+    // console.log('scrolling....')
     const element = $(`#${id}`);
     element.animate({
         scrollTop: element.prop("scrollHeight")
@@ -61,12 +66,50 @@ async function openChatWindow(e){
     let title = document.querySelector('#chat-box-title');
     title.innerHTML = e.target.innerHTML;
     group_id = (e.target.id).split('group_')[1];
+
+    try{
+        let res = await axios.get(`${backend_url}/user/is-admin/${group_id}`, {headers:{"Authorization": token}});
+        // console.log(res);
+        if(res.status!==200)
+            throw new Error(res.data.error);
+        group_admin = true;
+    }
+    catch(err){
+        group_admin = false;
+        console.log(err);
+    }
+
     await getMessages(group_id);
     setTimeout(() => {
         $('#chat-modal').modal('hide');
         scrollSmoothlyToBottom('chat-box');
         $('#chat-modal-box').style.display = 'block';
     }, 1000);   
+}
+
+async function showMembers(){
+    $('#chat-modal-box').delay(500).fadeOut('slow');
+    $('#members-modal').delay(500).fadeIn('slow');
+
+    await getGroupMembers(group_id);
+
+    setTimeout(() => {
+        $('#chat-modal-box').modal('hide');
+        $('#members-modal').style.display = 'block';
+    }, 1000);
+
+
+}
+
+function backToChatBox(){
+    $('#members-modal').delay(500).fadeOut('slow');
+    $('#chat-modal-box').delay(500).fadeIn('slow');
+
+    setTimeout(() => {
+        $('#members-modal').modal('hide');
+        scrollSmoothlyToBottom('chat-modal-box');
+        $('#chat-modal-box').style.display = 'block';
+    }, 1000)
 }
 
 function createGroup(){
@@ -113,6 +156,93 @@ function addGroups(groups){
         button.style.borderRadius = '2px'
         button.style.borderColor = 'brown'
         groups_list.appendChild(button);
+    }
+}
+
+function showGroupMembers(groupmembers){
+    let group_members = document.querySelector('#group-members-box');
+    group_members.innerHTML = '';
+
+    for(let i=0;i<groupmembers.length;i++){
+        let li = document.createElement('li');
+        li.className = 'list-group-item';
+
+        let btn = document.createElement('button');
+        btn.className = 'btn graident-color-right-to-left'
+        btn.appendChild(document.createTextNode('make admin'));
+        btn.id = `admin_${groupmembers[i].id}`;
+        btn.addEventListener('click', makeAdmin);
+
+        let btn2 = document.createElement('button');
+        btn2.className = 'btn graident-color-right-to-left'
+        btn2.appendChild(document.createTextNode('remove'));
+        btn2.id = `remove_${groupmembers[i].id}`;
+
+        btn2.addEventListener('click', removeMember);
+
+        let div = document.createElement('div');
+        if(user.id !== groupmembers[i].id){
+            div.className = 'float-end';
+            div.appendChild(btn);
+            div.append(' ');
+            div.appendChild(btn2);
+        }
+
+        li.appendChild(document.createTextNode(`${groupmembers[i].name}`));
+        li.style.color = 'chocolate';
+
+        if(groupmembers[i].admin === 1){
+            let span = document.createElement('span');
+            span.className = 'badge badge-secondary'
+            span.appendChild(document.createTextNode('admin'));
+            span.style.color = 'brown';
+            li.appendChild(span);
+        }
+        
+        if(group_admin)
+            li.appendChild(div);
+        group_members.appendChild(li);
+
+    }
+}
+
+async function makeAdmin(e){
+    try{
+        let user_id = (e.target.id).split('admin_')[1];
+        console.log(user_id);
+        let res = await axios.put(`${backend_url}/group/make-admin/${group_id}/${user_id}`,{}, {headers: {"Authorization": token}});
+        if(res.status!==200)
+            throw new Error(res.data.error);
+        await getGroupMembers(group_id);
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+async function removeMember(e){
+    try{
+        let user_id = (e.target.id).split('remove_')[1];
+        console.log(user_id);
+        let res = await axios.delete(`${backend_url}/group/remove-member/${group_id}/${user_id}`, {headers: {"Authorization": token}});
+        if(res.status!==200)
+            throw new Error(res.data.error);
+        await getGroupMembers(group_id);
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+async function getGroupMembers(group_id){
+    try{
+        let res = await axios.get(`${backend_url}/group/get-group-members/${group_id}`, {headers: {"Authorization": token}});
+        if(res.status!==200)
+            throw new Error(res.data.error);
+        showGroupMembers(res.data.members);
+    }
+    catch(err){
+        console.log(err);
     }
 }
 
@@ -166,18 +296,18 @@ async function checkNewMessagesInCurrentGroup(group_id){
     }
 }
 //-------do not remove this--------------//
-setInterval(async () => {
+// setInterval(async () => {
 
-    let new_messages = await checkNewMessagesInCurrentGroup(group_id);
-    console.log(new_messages);
-    if(new_messages!==undefined || new_messages.length>0){
-        messages = messages + new_messages.length;
-        for(let i=0;i<new_messages.length;i++){
-            createNewChat(new_messages[i]);
-            scrollSmoothlyToBottom('chat-box');
-        }
-    }
-}, 3000);
+//     let new_messages = await checkNewMessagesInCurrentGroup(group_id);
+//     console.log(new_messages);
+//     if(new_messages!==undefined || new_messages.length>0){
+//         messages = messages + new_messages.length;
+//         for(let i=0;i<new_messages.length;i++){
+//             createNewChat(new_messages[i]);
+//             scrollSmoothlyToBottom('chat-box');
+//         }
+//     }
+// }, 3000);
 
 async function showError(err){
     let err_div = document.querySelector('#error');
@@ -252,8 +382,9 @@ function createNewChat(message){
 }
 
 function showMessages(messages){
-    console.log(moment(messages[0].createdAt).format("hh:mm a"))
+    // console.log(moment(messages[0].createdAt).format("hh:mm a"))
     document.querySelector('#chat-box').innerHTML = '';
+    // console.log('chat box...')
     for(let i=0;i<messages.length;i++){
         createNewChat(messages[i]);
     }
@@ -261,15 +392,17 @@ function showMessages(messages){
 }
 
 async function getMessages(group_id){
+    // console.log('getting msgs....')
     messages = 0;
     try{
-        console.log(group_id);
+        // console.log(group_id);
         let res = await axios.get(`${backend_url}/chat/get-messages/${group_id}`, {headers: {"Authorization": token}});
         if(res.status!==200)
             throw new Error(res.data.error);
         messages = res.data.messages.length;
-        console.log(res.data.messages);
-        showMessages(res.data.messages);
+        // console.log(res.data.messages);
+        // if(res.data.messages.length>0)
+            showMessages(res.data.messages);
     }
     catch(err){
         showError(err.message);

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGroups = exports.createMembership = exports.createGroup = void 0;
+exports.removeMember = exports.makeAdmin = exports.getGroupMembers = exports.getGroups = exports.createMembership = exports.createGroup = void 0;
 const transaction_services_1 = require("../services/transaction-services");
 const group_services_1 = require("../services/group-services");
 const user_services_1 = require("../services/user-services");
@@ -19,7 +19,7 @@ const createGroup = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         group = yield (0, group_services_1.createNewGroup)(req.body.name, t);
         //   console.log(+req.user.id);
-        yield (0, group_services_1.createGroupMembership)(group, +req.user.id, req.body.name, t);
+        yield (0, group_services_1.createGroupMembership)(group, +req.user.id, req.body.name, true, t);
         yield t.commit();
         res.status(200).json({ success: true, group });
     }
@@ -42,7 +42,7 @@ const createMembership = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         let user = yield (0, user_services_1.findUserByPhone)(body.phone);
         if (user === undefined || user === null)
             throw new Error('User Not Found');
-        let membership = yield (0, group_services_1.createGroupMembership)(group, +user.id, group.name, t);
+        let membership = yield (0, group_services_1.createGroupMembership)(group, +user.id, group.name, false, t);
         yield t.commit();
         res.status(200).json({ success: true, membership });
     }
@@ -63,3 +63,44 @@ const getGroups = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getGroups = getGroups;
+const getGroupMembers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let params = req.params;
+        let members = yield (0, group_services_1.getAllMembersOfGroup)(+params.group_id);
+        res.status(200).json({ success: true, members });
+    }
+    catch (err) {
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.getGroupMembers = getGroupMembers;
+const makeAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const t = yield (0, transaction_services_1.transaction)();
+    try {
+        let params = req.params;
+        let update = yield (0, group_services_1.makeGroupAdmin)(+params.group_id, +params.user_id, t);
+        yield t.commit();
+        res.status(200).json({ success: true, message: 'Made Admin' });
+    }
+    catch (err) {
+        console.log(err);
+        yield t.rollback();
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.makeAdmin = makeAdmin;
+const removeMember = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const t = yield (0, transaction_services_1.transaction)();
+    try {
+        let params = req.params;
+        let deletes = yield (0, group_services_1.removeGroupMember)(+params.group_id, +params.user_id, t);
+        yield t.commit();
+        res.status(200).json({ success: true, message: 'Membership Removed' });
+    }
+    catch (err) {
+        console.log(err);
+        yield t.rollback();
+        res.status(201).send({ success: false, error: err.message });
+    }
+});
+exports.removeMember = removeMember;

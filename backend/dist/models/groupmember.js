@@ -25,6 +25,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
     __metadata("design:type", Number)
 ], Groupmember.prototype, "UserId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.BOOLEAN, allowNull: false }),
+    __metadata("design:type", Boolean)
+], Groupmember.prototype, "admin", void 0);
 Groupmember = __decorate([
     (0, sequelize_typescript_1.Table)({ timestamps: true, tableName: 'groupmembers' })
 ], Groupmember);

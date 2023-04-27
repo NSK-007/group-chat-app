@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from 'bcrypt';
 import { transaction } from "../services/transaction-services";
-import { createNewUser, findUserByEmail } from "../services/user-services";
+import { checkIfAdmin, createNewUser, findUserByEmail } from "../services/user-services";
 import User from "../models/user";
 import { sign } from "jsonwebtoken";
 import { config } from "dotenv";
@@ -68,5 +68,19 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
     }
     catch(err: Error | any){
         res.status(201).send({success: false, error: err.message});
+    }
+}
+
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        let params = req.params as {group_id: string};
+
+        let admin_record = await checkIfAdmin(+params.group_id, +req.user.id);
+        if(admin_record === null || admin_record === undefined || admin_record.length===0)
+            throw new Error('Not an admin');
+        res.status(200).json({success: true, admin: true}); 
+    }
+    catch(err: Error | any){
+        res.status(201).send({success: false, error: err.message})
     }
 }

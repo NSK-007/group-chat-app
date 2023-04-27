@@ -11,6 +11,9 @@ class Groupmember extends Model{
 
     @Column({type: DataType.INTEGER, allowNull: false})
     UserId!: number;
+
+    @Column({type: DataType.BOOLEAN, allowNull: false})
+    admin!: boolean
 }
 
 export default Groupmember

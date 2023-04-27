@@ -15,4 +15,5 @@ let corsOptions = {
 UserRouter.post('/signUp', (0, cors_1.default)(corsOptions), user_controller_1.signUpUser);
 UserRouter.post('/login', (0, cors_1.default)(corsOptions), user_controller_1.loginUser);
 UserRouter.get('/get-user', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, user_controller_1.getUser);
+UserRouter.get('/is-admin/:group_id', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, user_controller_1.isAdmin);
 exports.default = UserRouter;
