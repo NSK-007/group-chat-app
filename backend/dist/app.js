@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSocket = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
@@ -24,6 +25,8 @@ const chat_route_1 = __importDefault(require("./routes/chat-route"));
 const group_1 = __importDefault(require("./models/group"));
 const groupmember_1 = __importDefault(require("./models/groupmember"));
 const group_route_1 = __importDefault(require("./routes/group-route"));
+const socketIO = require('socket.io');
+const http = require('http');
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
 // app.use(cors({
@@ -39,12 +42,21 @@ chat_1.default.belongsTo(user_1.default, { constraints: true, onDelete: 'CASCADE
 user_1.default.hasMany(chat_1.default);
 groupmember_1.default.belongsTo(group_1.default);
 group_1.default.hasMany(groupmember_1.default);
+let io;
+let sckt;
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.default
             .sync();
         // .sync({force: true});
-        app.listen(3000, () => console.log('Server started on port 3000'));
+        // return http.createServer(app).listen(3000, () => console.log('Server started on port 3000'));
+        const server = http.createServer(app);
+        server.listen(3000, () => console.log('Server started on port 3000....'));
+        io = socketIO(server, { cors: { origin: ["http://127.0.0.1:5500"] } });
+        yield io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
+            console.log(socket.id);
+            sckt = socket;
+        }));
     }
     catch (err) {
         console.error(err);
@@ -52,3 +64,10 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 void start();
+const getSocket = () => {
+    let connection = {
+        sckt, io
+    };
+    return connection;
+};
+exports.getSocket = getSocket;

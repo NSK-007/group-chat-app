@@ -82,10 +82,11 @@ exports.getUser = getUser;
 const isAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let params = req.params;
+        let admin = true;
         let admin_record = yield (0, user_services_1.checkIfAdmin)(+params.group_id, +req.user.id);
         if (admin_record === null || admin_record === undefined || admin_record.length === 0)
-            throw new Error('Not an admin');
-        res.status(200).json({ success: true, admin: true });
+            admin = false;
+        res.status(200).json({ success: true, admin });
     }
     catch (err) {
         res.status(201).send({ success: false, error: err.message });

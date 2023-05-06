@@ -74,11 +74,12 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try{
         let params = req.params as {group_id: string};
+        let admin = true;
 
         let admin_record = await checkIfAdmin(+params.group_id, +req.user.id);
         if(admin_record === null || admin_record === undefined || admin_record.length===0)
-            throw new Error('Not an admin');
-        res.status(200).json({success: true, admin: true}); 
+            admin = false;
+        res.status(200).json({success: true, admin}); 
     }
     catch(err: Error | any){
         res.status(201).send({success: false, error: err.message})

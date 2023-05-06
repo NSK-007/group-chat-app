@@ -12,18 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.newMessages = exports.getMessages = exports.sendMessage = void 0;
 const chat_services_1 = require("../services/chat-services");
 const transaction_services_1 = require("../services/transaction-services");
+const app_file = require("../app");
 const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const t = yield (0, transaction_services_1.transaction)();
     try {
         let currentUser = req.user;
         const body = req.body;
         let params = req.params;
-        // console.log(params);
         let message = yield (0, chat_services_1.createMessage)(currentUser, body.message, +params.group_id, t);
+        // let message = {};
+        let connection = app_file.getSocket();
+        // console.log(socket);
+        connection.io.emit('new-message', message);
         yield t.commit();
         res.status(200).json({ success: true, message: message });
     }
     catch (err) {
+        console.log(err);
         yield t.rollback();
         res.status(201).send({ success: false, error: err.message });
     }

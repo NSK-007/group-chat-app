@@ -1,5 +1,8 @@
+const backend_url = 'http://localhost:3000';
+let socket;
 document.addEventListener('DOMContentLoaded', checkAuthentication);
 document.addEventListener('DOMContentLoaded', getGroups);
+document.addEventListener('DOMContentLoaded', socketConnection);
 let token = localStorage.getItem('token');
 const chatForm = document.querySelector('#chat-form');
 let back = document.querySelector('#back');
@@ -26,8 +29,10 @@ members.addEventListener('click', showMembers);
 back_to_chat.addEventListener('click', backToChatBox);
 
 let user;
-const backend_url = 'http://localhost:3000';
 let messages = 0;
+
+
+
 
 function containsOnlySpaces(str) {
     return str.trim().length === 0;
@@ -69,10 +74,10 @@ async function openChatWindow(e){
 
     try{
         let res = await axios.get(`${backend_url}/user/is-admin/${group_id}`, {headers:{"Authorization": token}});
-        // console.log(res);
+        console.log('admin', res.data.admin);
         if(res.status!==200)
             throw new Error(res.data.error);
-        group_admin = true;
+        group_admin = res.data.admin;
     }
     catch(err){
         group_admin = false;
@@ -295,6 +300,7 @@ async function checkNewMessagesInCurrentGroup(group_id){
         showError(err.message);
     }
 }
+
 //-------do not remove this--------------//
 // setInterval(async () => {
 
@@ -326,7 +332,7 @@ async function showError(err){
 }
 
 async function checkAuthentication(){
-    // console.log('authenticating...')
+    console.log('authenticating...')
     if(token === null)
         showError('Please login to continue');
     else{
@@ -422,9 +428,28 @@ async function sendMessage(e){
         messages += 1;
         createNewChat(res.data.message);  
         scrollSmoothlyToBottom('chat-box');
-
     }
     catch(err){
         showError(err.message)
+    }
+}
+
+function socketConnection(){
+    try{
+        socket = io(backend_url);
+        socket.on('connect', () => {
+            console.log(socket.id);
+            
+            socket.on('new-message', (msg) => {
+                // console.log(msg, user, group_id);
+                if(msg.UserId !== user.id && msg.GroupId === +group_id){
+                    createNewChat(msg);
+                    scrollSmoothlyToBottom('chat-box');
+                }
+            })
+        })
+    }
+    catch(err){
+        console.log(err)
     }
 }
