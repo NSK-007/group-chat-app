@@ -29,12 +29,22 @@ const socketIO = require('socket.io');
 const http = require('http');
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
-// app.use(cors({
-//     origin: 'http://127.0.0.1:5500',
-//     methods: ['POST', 'GET', 'PUT']
-// }));
+app.use((0, cors_1.default)({
+    origin: 'http://127.0.0.1:5501',
+    methods: ['POST', 'GET', 'PUT', 'DELETE']
+}));
 app.use((0, cors_1.default)());
+// app.use(upload.single('file'));
 app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.urlencoded({ extended: true }));
+// app.use(multer().single('multimedia'));
+// app.use(bodyParser.text({ type: '/' }));
+// app.use(express.json());
+// app.use(bodyParser());
+// app.use(express.urlencoded({extended: true}));
+// const upload = multer({ dest: "uploads/" });
+// app.post("/upload_files", upload.array("files"), authenticate, uploadFiles);
+// express.static('public');
 app.use('/user', user_route_1.default);
 app.use('/chat', chat_route_1.default);
 app.use('/group', group_route_1.default);
@@ -52,7 +62,7 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         // return http.createServer(app).listen(3000, () => console.log('Server started on port 3000'));
         const server = http.createServer(app);
         server.listen(3000, () => console.log('Server started on port 3000....'));
-        io = socketIO(server, { cors: { origin: ["http://127.0.0.1:5500"] } });
+        io = socketIO(server, { cors: { origin: ["http://127.0.0.1:5501"] } });
         yield io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
             console.log(socket.id);
             sckt = socket;

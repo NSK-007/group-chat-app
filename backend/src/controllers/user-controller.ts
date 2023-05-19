@@ -43,6 +43,7 @@ const generateToken = (user: User) => {
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const body = req.body as {email: string, password: string};
+        // console.log(body);
         let user = await findUserByEmail(body.email);
         if(user.length<=0)
             throw new Error('User doesn\'t exists');

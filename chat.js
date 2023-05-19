@@ -82,6 +82,7 @@ async function openChatWindow(e){
     catch(err){
         group_admin = false;
         console.log(err);
+        showError(err.message, '#chat-box-error')
     }
 
     await getMessages(group_id);
@@ -147,6 +148,7 @@ async function createNewGroupInBackend(e){
     }
     catch(err){
         console.log(err);
+        showError(err.message,'#create-group-error')
     }
 }
 
@@ -222,6 +224,7 @@ async function makeAdmin(e){
     }
     catch(err){
         console.log(err);
+        showError(err.message, '#group-member-error');
     }
 }
 
@@ -236,6 +239,7 @@ async function removeMember(e){
     }
     catch(err){
         console.log(err);
+        showError(err.message, '#group-member-error');
     }
 }
 
@@ -248,6 +252,7 @@ async function getGroupMembers(group_id){
     }
     catch(err){
         console.log(err);
+        showError(err.message, '#group-member-error');
     }
 }
 
@@ -264,6 +269,7 @@ async function addNewMember(e){
     }
     catch(err){
         console.log(err);
+        showError(err.message, '#chat-box-error');
     }
 }
 
@@ -276,6 +282,7 @@ async function getGroups(){
     }
     catch(err){
         console.log(err);
+        showError(err.message, '#group-list-error')
     }
 }
 
@@ -297,7 +304,7 @@ async function checkNewMessagesInCurrentGroup(group_id){
         return res.data.new_messages;
     }
     catch(err){
-        showError(err.message);
+        showError(err.message, '#chat-box-error');
     }
 }
 
@@ -315,11 +322,11 @@ async function checkNewMessagesInCurrentGroup(group_id){
 //     }
 // }, 3000);
 
-async function showError(err){
-    let err_div = document.querySelector('#error');
+async function showError(err, id){
+    let err_div = document.querySelector(id);
     err_div.className = 'alert alert-danger';
     err_div.innerHTML = err;  
-    $( "#error" ).fadeIn( 400 ).delay( 3000 ).fadeOut( 400 );
+    $(id).fadeIn( 400 ).delay( 3000 ).fadeOut( 400 );
 
    if(token===null){
     await new Promise((res, rej) => {
@@ -334,7 +341,7 @@ async function showError(err){
 async function checkAuthentication(){
     console.log('authenticating...')
     if(token === null)
-        showError('Please login to continue');
+        showError('Please login to continue', '#group-list-error');
     else{
         try{
             let res = await axios.get(`${backend_url}/user/get-user`, {headers: {"Authorization": token}});
@@ -368,8 +375,55 @@ function createNewChat(message){
 
     let div4 = document.createElement('div');
     div4.className = 'card card-text d-inline-block p-2 px-3 m-1 graident-color-right-to-left';
-    div4.appendChild(document.createTextNode(`${message.message}`));
 
+    if(message.fileURL!==''){
+        if(message.type === 'mp3'){
+            let audio = document.createElement('audio');
+            audio.setAttribute('width', '250px');
+            audio.setAttribute('height', '250px');
+            audio.controls = true;
+
+            let source = document.createElement('source');
+            source.setAttribute('src', message.fileURL);
+            source.setAttribute('type', 'audio/mp3');
+            audio.appendChild(source);
+            div4.appendChild(audio);
+        }
+        else if(message.type === 'pdf'){
+            let object = document.createElement('object');
+            object.setAttribute('type', 'application/pdf');
+            object.setAttribute('width', '250px');
+            object.setAttribute('height', '250px');
+            object.setAttribute('data', message.fileURL);
+            div4.appendChild(object);
+        }
+        else if(message.type === 'jpg' || message.type === 'jpeg' || message.type === 'png' ){
+            let img = document.createElement('img');
+            img.className = 'rounded mx-auto d-block';
+            img.setAttribute('src', message.fileURL);
+            img.setAttribute('width', '250px');
+            img.setAttribute('height', '250px');
+            div4.appendChild(img);
+        }
+        else if(message.type === 'mp4'){
+            let video = document.createElement('video');
+            video.setAttribute('width', '250px');
+            video.setAttribute('height', '250px');
+            video.controls = true;
+        
+            let source = document.createElement('source');
+            source.setAttribute('src', message.fileURL);
+            source.setAttribute('type', 'video/mp4');
+        
+            video.appendChild(source);
+            div4.appendChild(video);
+        }
+        let br = document.createElement('br');
+        div4.appendChild(br);
+    }
+
+
+    div4.appendChild(document.createTextNode(`${message.message}`));    
     let div5 = document.createElement('div');
     div5.className = 'small'
     
@@ -411,26 +465,48 @@ async function getMessages(group_id){
             showMessages(res.data.messages);
     }
     catch(err){
-        showError(err.message);
+        showError(err.message, '#chat-box-error');
     }
 }
 
 async function sendMessage(e){
-    e.preventDefault();
-    let message = e.target.msg.value;
-    if(message==='' || message===null)
-        throw new Error('Empty Message');
     try{
+    e.preventDefault();
+    let file = e.target.multimedia.files[0];
+    let message = e.target.msg.value;
+   
+    if(message === '' && file === undefined)
+        throw new Error('Empty Message')
+
+    if(!(file.type).includes('mp4') || !(file.type).includes('mp3') || !(file.type).includes('mpeg') || !(file.type).includes('pdf') || !(file.type).includes('jpg') || !(file.type).includes('jpeg') || !(file.type).includes('png')){
+        throw new Error('Please upload only mp4, mp3, mpeg, jpg/jpeg/png, pdf files only');
+    }
+
+    var formData = new FormData();
+    formData.append('message', message);
+    formData.append('multimedia', e.target.multimedia.files[0]);
+   
+    
         e.target.reset();
-        let res = await axios.post(`${backend_url}/chat/send-message/${group_id}`, {message}, {headers: {"Authorization": token}});
+        console.log(file);
+        
+        let res = await fetch(`${backend_url}/chat/send-message/${group_id}`, {
+            method: 'POST',
+            headers: {
+              "Authorization": token,
+            },
+            body: formData,
+        })
         if(res.status!==200)
             throw new Error(res.data.error);
+
+        res = await (res.json());
         messages += 1;
-        createNewChat(res.data.message);  
+        createNewChat(res.message);  
         scrollSmoothlyToBottom('chat-box');
     }
     catch(err){
-        showError(err.message)
+        showError(err.message, '#chat-box-error')
     }
 }
 
@@ -451,5 +527,6 @@ function socketConnection(){
     }
     catch(err){
         console.log(err)
+        showError(err.message, '#chat-box-error');
     }
 }

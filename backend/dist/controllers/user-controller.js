@@ -52,6 +52,7 @@ const generateToken = (user) => {
 const loginUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
+        // console.log(body);
         let user = yield (0, user_services_1.findUserByEmail)(body.email);
         if (user.length <= 0)
             throw new Error('User doesn\'t exists');

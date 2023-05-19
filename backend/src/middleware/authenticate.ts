@@ -6,7 +6,9 @@ config();
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try{
+        res.setHeader('Accept', '*/*');
         const token: string = req.header('Authorization')!;
+        // console.log(req.body);
         let user;
         const LoggedInUser = verify(token, process.env.TOKEN_SECRET!)!;
         if(!LoggedInUser)

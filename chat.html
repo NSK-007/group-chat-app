@@ -36,6 +36,10 @@
             padding: 10px;
             border-radius: 5px;
         }
+/* 
+        label{
+
+        } */
 
         #group-name{
           border: 0;
@@ -88,9 +92,23 @@
     #group-box::-webkit-scrollbar {
       display: none;
     }
+    input[type="file"]{
+      display: none;
+    }
+    #file_label{
+      display: inline-block;
+      color: #fff;
+      background-image: linear-gradient(to right, brown, chocolate);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      text-align: center;
+      padding: 15px 40px;
+      cursor: pointer;
+    }
     /* #chat-box:hover{
       display: block;
     }
+    
 
 
 #chat-box::-webkit-scrollbar-track {
@@ -116,6 +134,7 @@
               <button id="log-out" type="button" class="btn graident-color-right-to-left">Logout</button>
             </div>
             <div id="group-box" class="modal-body" style="height: 40rem;">
+              <div id="group-list-error"></div>
              <div class="list-group">
                   <h3 style="color: brown;">Groups</h3>
                   <div class="row">
@@ -158,12 +177,41 @@
               </div>
               </div>
               <div id="chat-box" class="modal-body">
-                <div id="error"></div>
+                
+                <div class="d-flex align-items-baseline text-end justify-content-end mb-4">
+                    <div class="pe-2">
+                        <div class="profile">Shiva</div>
+                        <div class="card card-text d-inline-block p-2 px-3 m-1 graident-color-right-to-left">
+                          <!-- <img class="rounded mx-auto d-block" src="chat-speech-bubble-icon_23-2147501656.jpg" width="250px" height="250px"> -->
+                          <!-- <embed src="FINALREPORT2.pdf" width="200px" height="210px" /> -->
+                          <!-- <video width="250px" height="250px" controls>
+                            <source src="321160385_733110391792043_9082181745807543740_n.mp4" type="video/mp4">
+                          </video> -->
+                          <!-- <audio width="250px" height="250px" controls>
+                            <source src="file_example_MP3_700KB.mp3" type="audio/mp3">
+                          </audio> -->
+                          <object data="https://expensetracker900.s3.amazonaws.com/2_Expenses/Monthly/Shiva+Nadigoti+report+.pdf" type="application/pdf" width="300px" height="300px">
+                            <!-- <p>Unable to display PDF file. <a href="https://expensetracker900.s3.amazonaws.com/2_Expenses/Monthly/Shiva+Nadigoti+report+.pdf">Download</a> instead.</p> -->
+                          </object>
+                          <br>
+                            Hello!, how are you?
+                        </div>
+                        <div class="small">
+                            01:11
+                        </div>
+                    </div>
+                </div>
+
               </div>
               <div class="modal-footer justify-content-center">
-                <form id="chat-form">
+                
+
+                <form name="file-form" id="chat-form">
+                  <div id="chat-box-error"></div><br>
                     <div class="input-group mb-3">
                       <input type="text" name="msg" class="form-control" placeholder="send message" aria-label="Recipient's username" aria-describedby="button-addon2">
+                      <input id="uploadBtn" name="multimedia" type="file" class="graident-color-right-to-left">
+                      <label id="file_label" name="multimedia" for="uploadBtn"><i class="bi bi-upload"></i></label>
                       <button class="btn graident-color-right-to-left" type="submit" id="button-addon2"><i class="bi bi-send"></i></button>
                     </div> 
                 </form>
@@ -185,7 +233,7 @@
                 <button id="groups" type="button" class="btn graident-color-right-to-left">Groups</button>
               </div>
               <div id="group-box" class="modal-body" style="height: 50rem;">
-                <div id="error"></div>
+                <div id="create-group-error"></div>
 
                 <!-- -----create group form------- -->
                 <form id="group-form">
@@ -217,6 +265,7 @@
                 <button id="back-to-chat" type="button" class="btn graident-color-right-to-left">back</button>
               </div>
               <div class="modal-body" style="height: 50rem;">
+                <div id="group-member-error"></div>
                 <ul id="group-members-box" class="list-group list-group-flush">
                 </ul>
               </div>

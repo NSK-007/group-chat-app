@@ -14,6 +14,12 @@ class Chat extends Model{
 
     @Column({type: DataType.INTEGER, allowNull: false})
     GroupId!: number;
+
+    @Column({type: DataType.STRING, allowNull: false})
+    fileURL!: string;
+
+    @Column({type: DataType.STRING, allowNull: false})
+    type!: string;
 }
 
 export default Chat;

@@ -5,7 +5,7 @@ import { authenticate } from "../middleware/authenticate";
 
 const UserRouter = Router();
 let corsOptions = {
-    origin : 'http://127.0.0.1:5500',
+    origin : 'http://127.0.0.1:5501',
     methods: ["POST", "GET"]
 }
 

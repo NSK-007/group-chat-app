@@ -1,22 +1,34 @@
 import { NextFunction, Request, Response } from "express";
-import { createMessage, getNewMessages, getGroupChats } from "../services/chat-services";
+import { createMessage, getNewMessages, getGroupChats} from "../services/chat-services";
 import { transaction } from "../services/transaction-services";
 import app_file = require('../app');
+import { uploadToS3 } from "../services/S3-services";
 
 export const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     const t = await transaction();
     try{
         let currentUser = req.user;
-        const body = req.body as {message: string};
         let params = req.params as {group_id: string};
+        // console.log(req.body, req.file);
+        let file = req.file as Express.Multer.File
 
-        let message = await createMessage(currentUser, body.message, +params.group_id, t);
+        if(req.body.length===0 && req.file === undefined)
+            throw new Error('No Data Present');
 
-        // let message = {};
-
+        let message;
+        let filename;
+        let fileURL = '';
+        let type='';
+        if(file!==undefined){
+            type = file.originalname.split('.')[1];
+            filename = file.originalname.split('.')[0]+new Date()+'.'+type;
+            fileURL = await uploadToS3(filename, file, file.mimetype) as string;
+            // console.log(fileURL);
+        }
+            
+        message = await createMessage(currentUser, req.body.message, +params.group_id, fileURL, type, t);
         let connection = app_file.getSocket();
-        // console.log(socket);
-        connection.io.emit('new-message', message); 
+        await connection.io.emit('new-message', message); 
         await t.commit();
         res.status(200).json({success: true, message: message});
     }

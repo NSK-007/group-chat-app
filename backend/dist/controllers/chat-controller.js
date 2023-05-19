@@ -13,17 +13,29 @@ exports.newMessages = exports.getMessages = exports.sendMessage = void 0;
 const chat_services_1 = require("../services/chat-services");
 const transaction_services_1 = require("../services/transaction-services");
 const app_file = require("../app");
+const S3_services_1 = require("../services/S3-services");
 const sendMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const t = yield (0, transaction_services_1.transaction)();
     try {
         let currentUser = req.user;
-        const body = req.body;
         let params = req.params;
-        let message = yield (0, chat_services_1.createMessage)(currentUser, body.message, +params.group_id, t);
-        // let message = {};
+        // console.log(req.body, req.file);
+        let file = req.file;
+        if (req.body.length === 0 && req.file === undefined)
+            throw new Error('No Data Present');
+        let message;
+        let filename;
+        let fileURL = '';
+        let type = '';
+        if (file !== undefined) {
+            type = file.originalname.split('.')[1];
+            filename = file.originalname.split('.')[0] + new Date() + '.' + type;
+            fileURL = (yield (0, S3_services_1.uploadToS3)(filename, file, file.mimetype));
+            // console.log(fileURL);
+        }
+        message = yield (0, chat_services_1.createMessage)(currentUser, req.body.message, +params.group_id, fileURL, type, t);
         let connection = app_file.getSocket();
-        // console.log(socket);
-        connection.io.emit('new-message', message);
+        yield connection.io.emit('new-message', message);
         yield t.commit();
         res.status(200).json({ success: true, message: message });
     }

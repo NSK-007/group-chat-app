@@ -10,34 +10,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-let Chat = class Chat extends sequelize_typescript_1.Model {
+let Attachment = class Attachment extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.AutoIncrement,
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, primaryKey: true, allowNull: false }),
     __metadata("design:type", Number)
-], Chat.prototype, "id", void 0);
+], Attachment.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", String)
-], Chat.prototype, "user", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
-    __metadata("design:type", String)
-], Chat.prototype, "message", void 0);
+], Attachment.prototype, "fileURL", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
     __metadata("design:type", Number)
-], Chat.prototype, "GroupId", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
-    __metadata("design:type", String)
-], Chat.prototype, "fileURL", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
-    __metadata("design:type", String)
-], Chat.prototype, "type", void 0);
-Chat = __decorate([
-    (0, sequelize_typescript_1.Table)({ timestamps: true, tableName: 'chats', initialAutoIncrement: '1' })
-], Chat);
-exports.default = Chat;
+], Attachment.prototype, "chat_id", void 0);
+Attachment = __decorate([
+    (0, sequelize_typescript_1.Table)({ timestamps: true, tableName: 'attachments' })
+], Attachment);
+exports.default = Attachment;

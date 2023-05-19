@@ -9,7 +9,7 @@ const cors_1 = __importDefault(require("cors"));
 const group_controller_1 = require("../controllers/group-controller");
 const GroupRouter = (0, express_1.Router)();
 let corsOptions = {
-    origin: 'http://127.0.0.1:5500',
+    origin: 'http://127.0.0.1:5501',
     methods: ["POST", "GET", "PUT"]
 };
 GroupRouter.get('/get-groups', (0, cors_1.default)(corsOptions), authenticate_1.authenticate, group_controller_1.getGroups);

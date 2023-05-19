@@ -3,9 +3,9 @@ import User from "../models/user"
 import Chat from "../models/chat";
 import connection from "../util/database";
 
-export const createMessage = (user: User, message: string, group_id: number, t: Transaction) => {
+export const createMessage = (user: User, message: string, group_id: number, fileURL: string, type: string, t: Transaction) => {
     // console.log(group_id);
-    return user.$create('chat', {message, user: user.name, GroupId: group_id}, {transaction: t});
+    return user.$create('chat', {message, user: user.name, GroupId: group_id, fileURL, type}, {transaction: t});
 }
 
 export const getGroupChats = (group_id: number) => {

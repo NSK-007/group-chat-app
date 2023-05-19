@@ -64,6 +64,7 @@ async function loginUser(e){
     }
 
     e.target.reset();
+    // console.log(login_obj)
     try{
         let res = await axios.post(`${backend_url}/user/login`, login_obj);
         if(res.status!==200)

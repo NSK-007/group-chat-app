@@ -16,7 +16,9 @@ const user_services_1 = require("../services/user-services");
 (0, dotenv_1.config)();
 const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        res.setHeader('Accept', '*/*');
         const token = req.header('Authorization');
+        // console.log(req.body);
         let user;
         const LoggedInUser = (0, jsonwebtoken_1.verify)(token, process.env.TOKEN_SECRET);
         if (!LoggedInUser)
