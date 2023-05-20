@@ -425,14 +425,25 @@ function createNewChat(message){
 
     div4.appendChild(document.createTextNode(`${message.message}`));    
     let div5 = document.createElement('div');
-    div5.className = 'small'
-    
-    if(moment(message.createdAt).format('DD-MM-YYY') === moment(new Date()).format('DD-MM-YYY'))
-        div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('hh:mm a')}`));
-    else if(moment(message.createdAt).format('YYY') === moment(new Date()).format('YYY'))
-        div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('DD-MM hh:mm a')}`));
-    else
-        div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('DD-MM hh:mm a')}`));
+    div5.className = 'small';
+
+    if(message.created_date === undefined || message.created_date === ''){
+        if(moment(message.createdAt).format('DD-MM-YYY') === moment(new Date()).format('DD-MM-YYY'))
+            div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('hh:mm a')}`));
+        else if(moment(message.createdAt).format('YYY') === moment(new Date()).format('YYY'))
+            div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('DD-MM hh:mm a')}`));
+        else
+            div5.appendChild(document.createTextNode(`${moment(message.createdAt).format('DD-MM hh:mm a')}`));
+    }
+    else{
+        console.log('archived')
+        if(moment(message.created_date).format('DD-MM-YYY') === moment(new Date()).format('DD-MM-YYY'))
+            div5.appendChild(document.createTextNode(`${moment(message.created_date).format('hh:mm a')}`));
+        else if(moment(message.created_date).format('YYY') === moment(new Date()).format('YYY'))
+            div5.appendChild(document.createTextNode(`${moment(message.created_date).format('DD-MM hh:mm a')}`));
+        else
+            div5.appendChild(document.createTextNode(`${moment(message.created_date).format('DD-MM hh:mm a')}`));
+    }
 
     div2.appendChild(div3);
     div2.appendChild(div4);
@@ -478,8 +489,10 @@ async function sendMessage(e){
     if(message === '' && file === undefined)
         throw new Error('Empty Message')
 
-    if(!(file.type).includes('mp4') || !(file.type).includes('mp3') || !(file.type).includes('mpeg') || !(file.type).includes('pdf') || !(file.type).includes('jpg') || !(file.type).includes('jpeg') || !(file.type).includes('png')){
+    if(file!==undefined){
+        if(!(file.type).includes('mp4') || !(file.type).includes('mp3') || !(file.type).includes('mpeg') || !(file.type).includes('pdf') || !(file.type).includes('jpg') || !(file.type).includes('jpeg') || !(file.type).includes('png')){
         throw new Error('Please upload only mp4, mp3, mpeg, jpg/jpeg/png, pdf files only');
+       }
     }
 
     var formData = new FormData();
@@ -506,6 +519,7 @@ async function sendMessage(e){
         scrollSmoothlyToBottom('chat-box');
     }
     catch(err){
+        console.log(err)
         showError(err.message, '#chat-box-error')
     }
 }

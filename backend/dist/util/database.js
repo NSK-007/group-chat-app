@@ -10,6 +10,7 @@ const chat_1 = __importDefault(require("../models/chat"));
 const group_1 = __importDefault(require("../models/group"));
 const groupmember_1 = __importDefault(require("../models/groupmember"));
 const attachment_1 = __importDefault(require("../models/attachment"));
+const chat_archive_1 = __importDefault(require("../models/chat-archive"));
 (0, dotenv_1.config)();
 const connection = new sequelize_typescript_1.Sequelize({
     dialect: 'mysql',
@@ -19,6 +20,6 @@ const connection = new sequelize_typescript_1.Sequelize({
     database: process.env.DB_NAME,
     // repositoryMode: true,
     logging: false,
-    models: [chat_1.default, user_1.default, group_1.default, groupmember_1.default, attachment_1.default]
+    models: [chat_1.default, user_1.default, group_1.default, groupmember_1.default, attachment_1.default, chat_archive_1.default]
 });
 exports.default = connection;

@@ -49,7 +49,10 @@ exports.sendMessage = sendMessage;
 const getMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let params = req.params;
-        const messages = yield (0, chat_services_1.getGroupChats)(+params.group_id);
+        let messages = yield (0, chat_services_1.getGroupChats)(+params.group_id);
+        if (messages.length === 0) {
+            messages = yield (0, chat_services_1.getMessagesFromArchive)(+params.group_id);
+        }
         res.status(200).json({ success: true, messages });
     }
     catch (err) {

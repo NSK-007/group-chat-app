@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createMessage, getNewMessages, getGroupChats} from "../services/chat-services";
+import { createMessage, getNewMessages, getGroupChats, getMessagesFromArchive} from "../services/chat-services";
 import { transaction } from "../services/transaction-services";
 import app_file = require('../app');
 import { uploadToS3 } from "../services/S3-services";
@@ -42,7 +42,12 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
 export const getMessages = async (req: Request, res: Response, next: NextFunction) => {
     try{
         let params = req.params as {group_id: string};
-        const messages = await getGroupChats(+params.group_id);
+        let messages = await getGroupChats(+params.group_id);
+
+        if(messages.length===0){
+            messages = await getMessagesFromArchive(+params.group_id);
+        }
+
         res.status(200).json({success: true, messages});
     }
     catch(err: Error | any){
