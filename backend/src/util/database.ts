@@ -5,6 +5,7 @@ import Chat from '../models/chat';
 import Group from '../models/group';
 import GroupMember from '../models/groupmember';
 import Attachment from '../models/attachment';
+import ChatArchive from '../models/chat-archive';
 config();
 
 const connection = new Sequelize({
@@ -15,7 +16,7 @@ const connection = new Sequelize({
     database: process.env.DB_NAME,
     // repositoryMode: true,
     logging: false,
-    models: [Chat, User, Group, GroupMember, Attachment]
+    models: [Chat, User, Group, GroupMember, Attachment, ChatArchive]
 });
 
 export default connection;

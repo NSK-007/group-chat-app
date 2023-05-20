@@ -10,6 +10,8 @@ import ChatRouter from './routes/chat-route';
 import Group from './models/group';
 import Groupmember from './models/groupmember';
 import GroupRouter from './routes/group-route';
+import cron from 'node-cron'
+import { archiveChats } from './services/chat-services';
 
 const socketIO = require('socket.io');
 const http = require('http');
@@ -41,7 +43,6 @@ app.use('/chat', ChatRouter);
 app.use('/group', GroupRouter);
 
 
-
 Chat.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Chat);
 Groupmember.belongsTo(Group);
@@ -57,6 +58,13 @@ const start = async(): Promise<any> => {
         // return http.createServer(app).listen(3000, () => console.log('Server started on port 3000'));
         const server = http.createServer(app);
         server.listen(3000, () => console.log('Server started on port 3000....'));
+
+        cron.schedule('*/50 * * * * *', async function(){
+            let data = `${new Date()}: Moving the data to archive\\n`;
+            console.log(data);
+            await archiveChats();
+            // console.log(chats[chats.length-1]);
+        });
 
         io = socketIO(server, {cors: {origin: ["http://127.0.0.1:5501"]}});
         await io.on('connection', async (socket: any) => {

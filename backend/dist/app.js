@@ -25,6 +25,8 @@ const chat_route_1 = __importDefault(require("./routes/chat-route"));
 const group_1 = __importDefault(require("./models/group"));
 const groupmember_1 = __importDefault(require("./models/groupmember"));
 const group_route_1 = __importDefault(require("./routes/group-route"));
+const node_cron_1 = __importDefault(require("node-cron"));
+const chat_services_1 = require("./services/chat-services");
 const socketIO = require('socket.io');
 const http = require('http');
 const app = (0, express_1.default)();
@@ -62,6 +64,14 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         // return http.createServer(app).listen(3000, () => console.log('Server started on port 3000'));
         const server = http.createServer(app);
         server.listen(3000, () => console.log('Server started on port 3000....'));
+        node_cron_1.default.schedule('*/50 * * * * *', function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                let data = `${new Date()}: Moving the data to archive\\n`;
+                console.log(data);
+                yield (0, chat_services_1.archiveChats)();
+                // console.log(chats[chats.length-1]);
+            });
+        });
         io = socketIO(server, { cors: { origin: ["http://127.0.0.1:5501"] } });
         yield io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
             console.log(socket.id);
