@@ -59,7 +59,7 @@ const start = async(): Promise<any> => {
         const server = http.createServer(app);
         server.listen(3000, () => console.log('Server started on port 3000....'));
 
-        cron.schedule('*/50 * * * * *', async function(){
+        cron.schedule('* 00 12 * * *', async function(){
             let data = `${new Date()}: Moving the data to archive\\n`;
             console.log(data);
             await archiveChats();

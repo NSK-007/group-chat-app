@@ -190,10 +190,13 @@ function showGroupMembers(groupmembers){
         let div = document.createElement('div');
         if(user.id !== groupmembers[i].id){
             div.className = 'float-end';
-            div.appendChild(btn);
+            if(!groupmembers[i].admin)
+                div.appendChild(btn);
             div.append(' ');
             div.appendChild(btn2);
         }
+
+
 
         li.appendChild(document.createTextNode(`${groupmembers[i].name}`));
         li.style.color = 'chocolate';
@@ -215,12 +218,14 @@ function showGroupMembers(groupmembers){
 
 async function makeAdmin(e){
     try{
+        e.preventDefault();
         let user_id = (e.target.id).split('admin_')[1];
         console.log(user_id);
         let res = await axios.put(`${backend_url}/group/make-admin/${group_id}/${user_id}`,{}, {headers: {"Authorization": token}});
         if(res.status!==200)
             throw new Error(res.data.error);
         await getGroupMembers(group_id);
+        // showSuccess('User added', '#group-member-error');
     }
     catch(err){
         console.log(err);
@@ -257,6 +262,7 @@ async function getGroupMembers(group_id){
 }
 
 async function addNewMember(e){
+    e.preventDefault();
     try{
         let phone = e.target.invite.value;
         if(phone==='' || phone===null)
@@ -266,6 +272,7 @@ async function addNewMember(e){
         if(res.status!==200)
             throw new Error(res.data.error);
         console.log(res.data); 
+        showSuccess('User addedd', '#chat-box-error')
     }
     catch(err){
         console.log(err);
@@ -325,6 +332,22 @@ async function checkNewMessagesInCurrentGroup(group_id){
 async function showError(err, id){
     let err_div = document.querySelector(id);
     err_div.className = 'alert alert-danger';
+    err_div.innerHTML = err;  
+    $(id).fadeIn( 400 ).delay( 3000 ).fadeOut( 400 );
+
+   if(token===null){
+    await new Promise((res, rej) => {
+        setTimeout(() => {
+            res();
+            window.location.href = './login.html';
+        }, 3000);
+    });
+   }
+}
+
+async function showSuccess(err, id){
+    let err_div = document.querySelector(id);
+    err_div.className = 'alert alert-success';
     err_div.innerHTML = err;  
     $(id).fadeIn( 400 ).delay( 3000 ).fadeOut( 400 );
 

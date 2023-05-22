@@ -15,7 +15,7 @@ export const getGroupChats = (group_id: number) => {
 }
 
 export const getMessagesFromArchive = (group_id: number) => {
-    return ChatArchive.findAll({order:[['createdAt', 'DESC']], where: {GroupId: group_id}, limit: 15 })
+    return ChatArchive.findAll({order:[['created_date', 'DESC']], where: {GroupId: group_id}, limit: 50})
 }
 
 export const getNewMessages = (count: number, group_id: string) => {

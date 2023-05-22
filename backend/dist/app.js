@@ -64,7 +64,7 @@ const start = () => __awaiter(void 0, void 0, void 0, function* () {
         // return http.createServer(app).listen(3000, () => console.log('Server started on port 3000'));
         const server = http.createServer(app);
         server.listen(3000, () => console.log('Server started on port 3000....'));
-        node_cron_1.default.schedule('*/50 * * * * *', function () {
+        node_cron_1.default.schedule('* 00 12 * * *', function () {
             return __awaiter(this, void 0, void 0, function* () {
                 let data = `${new Date()}: Moving the data to archive\\n`;
                 console.log(data);

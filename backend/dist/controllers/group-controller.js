@@ -42,6 +42,10 @@ const createMembership = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         let user = yield (0, user_services_1.findUserByPhone)(body.phone);
         if (user === undefined || user === null)
             throw new Error('User Not Found');
+        let memship = yield (0, group_services_1.findGroupMembership)(+params.group_id, user.id);
+        // console.log(memship);
+        if (memship.length > 0)
+            throw new Error('User is already a member');
         let membership = yield (0, group_services_1.createGroupMembership)(group, +user.id, group.name, false, t);
         yield t.commit();
         res.status(200).json({ success: true, membership });

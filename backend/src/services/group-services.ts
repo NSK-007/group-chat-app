@@ -16,6 +16,10 @@ export const findCreatedGroup = (id: number) => {
     return Group.findByPk(id);
 }
 
+export const findGroupMembership = (group_id: number, user_id: number) => {
+    return Groupmember.findAll({where: {UserId: user_id, GroupId: group_id}})
+}
+
 export const getAllUserGroups = (uid: number) => {
     return Groupmember.findAll({where: {UserId: uid}});
 }

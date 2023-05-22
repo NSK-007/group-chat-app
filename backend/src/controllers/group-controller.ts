@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { transaction } from "../services/transaction-services";
-import { createGroupMembership, createNewGroup, findCreatedGroup, getAllMembersOfGroup, getAllUserGroups, getGroupById, makeGroupAdmin, removeGroupMember } from "../services/group-services";
+import { createGroupMembership, createNewGroup, findCreatedGroup, findGroupMembership, getAllMembersOfGroup, getAllUserGroups, getGroupById, makeGroupAdmin, removeGroupMember } from "../services/group-services";
 import Group from "../models/group";
 import { findUserByPhone } from "../services/user-services";
 
@@ -33,6 +33,12 @@ export const createMembership = async (req: Request, res: Response, next: NextFu
         let user = await findUserByPhone(body.phone);
         if(user===undefined || user === null)
             throw new Error('User Not Found');
+
+        let memship = await findGroupMembership(+params.group_id, user.id);
+        // console.log(memship);
+        if(memship.length>0)
+            throw new Error('User is already a member');
+
         let membership = await createGroupMembership(group, +user.id, group.name, false, t);
         await t.commit();
         res.status(200).json({success: true, membership});

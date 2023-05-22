@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeGroupMember = exports.makeGroupAdmin = exports.getAllMembersOfGroup = exports.getGroupById = exports.getAllUserGroups = exports.findCreatedGroup = exports.createGroupMembership = exports.createNewGroup = void 0;
+exports.removeGroupMember = exports.makeGroupAdmin = exports.getAllMembersOfGroup = exports.getGroupById = exports.getAllUserGroups = exports.findGroupMembership = exports.findCreatedGroup = exports.createGroupMembership = exports.createNewGroup = void 0;
 const sequelize_1 = require("sequelize");
 const group_1 = __importDefault(require("../models/group"));
 const groupmember_1 = __importDefault(require("../models/groupmember"));
@@ -30,6 +30,10 @@ const findCreatedGroup = (id) => {
     return group_1.default.findByPk(id);
 };
 exports.findCreatedGroup = findCreatedGroup;
+const findGroupMembership = (group_id, user_id) => {
+    return groupmember_1.default.findAll({ where: { UserId: user_id, GroupId: group_id } });
+};
+exports.findGroupMembership = findGroupMembership;
 const getAllUserGroups = (uid) => {
     return groupmember_1.default.findAll({ where: { UserId: uid } });
 };
